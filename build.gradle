@@ -27,8 +27,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-group = "keystrokesmod"
-archivesBaseName = "SilenceFix"
+group = "NzkRaven"
+archivesBaseName = "NzkRaven"
 //version = "Dev"
 
 compileJava {
