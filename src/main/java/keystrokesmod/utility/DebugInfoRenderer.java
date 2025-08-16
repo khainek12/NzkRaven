@@ -57,7 +57,18 @@ public class DebugInfoRenderer extends net.minecraft.client.gui.Gui {
         }
 
         if (mc.currentScreen == null) {
-            RenderUtils.renderBPS(String.format("Server speed: %.2fbps  Client speed: ", PlayerMove.getXzSecSpeed(lastServerPos, curServerPos)), true, true);
+            int fps = mc.getDebugFPS();
+            int ping = mc.getNetHandler().getPlayerInfo(mc.thePlayer.getUniqueID()).getResponseTime();
+
+            // Hiển thị FPS + Ping + Speed
+            RenderUtils.renderBPS(
+                String.format("FPS: %d  Ping: %dms  Server speed: %.2fbps", 
+                    fps, ping, PlayerMove.getXzSecSpeed(lastServerPos, curServerPos)
+                ), 
+                true, true
+            );
+
+            // Hiển thị speed từ jump
             if (avgSpeedFromJump != -1) {
                 ScaledResolution scaledResolution = new ScaledResolution(Client.mc);
 
@@ -70,7 +81,28 @@ public class DebugInfoRenderer extends net.minecraft.client.gui.Gui {
                         new Color(255, 255, 255).getRGB()
                 );
             }
+
+            // Hiển thị keystrokes (WASD + SPACE + LMB + RMB)
+            int x = 20;
+            int y = 40;
+            drawKey("W", Keyboard.isKeyDown(Keyboard.KEY_W), x + 20, y);
+            drawKey("A", Keyboard.isKeyDown(Keyboard.KEY_A), x, y + 20);
+            drawKey("S", Keyboard.isKeyDown(Keyboard.KEY_S), x + 20, y + 20);
+            drawKey("D", Keyboard.isKeyDown(Keyboard.KEY_D), x + 40, y + 20);
+            drawKey("SPACE", Keyboard.isKeyDown(Keyboard.KEY_SPACE), x + 10, y + 40, 50, 15);
+            drawKey("LMB", mc.gameSettings.keyBindAttack.isKeyDown(), x, y + 60, 30, 15);
+            drawKey("RMB", mc.gameSettings.keyBindUseItem.isKeyDown(), x + 35, y + 60, 30, 15);
         }
+    }
+
+    private void drawKey(String text, boolean pressed, int x, int y) {
+        drawKey(text, pressed, x, y, 20, 20);
+    }
+
+    private void drawKey(String text, boolean pressed, int x, int y, int w, int h) {
+        int color = pressed ? new Color(100, 200, 100, 200).getRGB() : new Color(0, 0, 0, 120).getRGB();
+        drawRect(x, y, x + w, y + h, color);
+        FontManager.getMinecraft().drawCenteredString(text, x + w / 2f, y + h / 2f - 3, 0xFFFFFF);
     }
 
     @EventListener
